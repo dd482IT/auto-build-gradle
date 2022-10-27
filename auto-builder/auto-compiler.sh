@@ -11,13 +11,11 @@
 #-Modify script to use pop instead of cd
 
 file=$1 #file argument
-echo ["FLAAAAAAAAAAAAAAAAG"]
 if ! command -v git &> /dev/null
 then
     echo "git could not be found"
     exit 
 fi 
-echo ["FLAAAAAAAAAAAAAAAAG"]
 #check if argument file exists
 [ -f "$file" ] || echo "Usage: file.txt"
 #make an ouput dir 
@@ -35,7 +33,6 @@ while read -r repo; do
     echo "[-------------Cloning ["$repo"]-------------]"
     git clone "$repo" "$dirName" 
     cd "$dirName" || echo "[-------No Repo Dir-------]" 
-
     if [ -f "gradlew" ];
     then
         echo "[-------------Gradlew file Exists-------------]"
@@ -69,6 +66,7 @@ while read -r repo; do
         echo "[-------------Attempting to remove clone-------------]"
         rm -rf "$dirName" && echo "[-------------Deleted $dirName-------------]"
     fi
+    exit 0 # This is for testing a single project at a time. Remove this to use entire file. 
 done < "$file"
 echo "[-------------Completed-------------]"
 rm -rf output/*
