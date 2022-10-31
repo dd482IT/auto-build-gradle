@@ -28,11 +28,11 @@ rm -rf "$outdir"/*
 while read -r repo; do
 
     dirName="$(basename -- "$repo")"
-    cd "$outdir" || echo "[-------No Out Dir-------]"
-    mkdir "$outdir"/"$dirName"
+    cd "$outdir" 
+    mkdir "$dirName"
     echo "[-------------Cloning ["$repo"]-------------]"
     git clone "$repo" "$dirName" 
-    cd "$dirName" || echo "[-------No Repo Dir-------]" 
+    cd "$dirName" 
     if [ -f "gradlew" ];
     then
         echo "[-------------Gradlew file Exists-------------]"
@@ -60,13 +60,25 @@ while read -r repo; do
             continue    
         fi
         echo "$repo" >> "$rootpath"/buildable.txt
+    elif [ -f "build.xml" ];
+    then
+        echo "[-------------Build.xml file Exists-------------]"
+        maven_output=$(ant compile); ant_return_code=$?
+        if [ $ant_return_code != 0 ] #test this on build that failes
+        then 
+            echo "[-------------Ant failed with exit status $ant_return_code-------------]"
+            pwd
+            cd "$outdir" || exit 1
+            rm -rf "$dirName"
+            continue    
+        fi
+        echo "$repo" >> "$rootpath"/buildable.txt
     else
         echo "[-------------Build file does not exist-------------]"
         cd "$outdir" | exit
         echo "[-------------Attempting to remove clone-------------]"
         rm -rf "$dirName" && echo "[-------------Deleted $dirName-------------]"
     fi
-    exit 0 # This is for testing a single project at a time. Remove this to use entire file. 
+    #exit 0 # This is for testing a single project at a time. Remove this to use entire file. 
 done < "$file"
 echo "[-------------Completed-------------]"
-rm -rf output/*
