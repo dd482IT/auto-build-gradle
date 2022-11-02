@@ -17,7 +17,11 @@ then
     echo "git could not be found"
     exit 
 fi 
+
 linksCount = $(wc -l $file)
+iteration = 0
+successful = 0 
+failed = 0
 
 #check if argument file exists
 [ -f "$file" ] || echo "Usage: file.txt"
@@ -29,15 +33,15 @@ rm -rf "$outdir"/*
 
 #Loop through each link: May cause error if wrapped with "" 
 while read -r repo; do
-    iteration = 0
-    successful = 0 
-    failed = 0
     echo "Current Link $teration"
     dirName="$(basename -- "$repo")"
+
     cd "$outdir" 
     mkdir "$dirName"
+
     echo "[-------------Cloning ["$repo"]-------------]"
     git clone "$repo" "$dirName" 
+    
     cd "$dirName" 
     if [ -f "gradlew" ];
     then
