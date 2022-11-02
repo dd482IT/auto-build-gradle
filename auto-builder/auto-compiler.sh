@@ -10,12 +10,15 @@
 #-Find a way to redirect any failed builds to standard error. *currently outputs to a <repo>.log file 
 #-Modify script to use pop instead of cd
 
+
 file=$1 #file argument
 if ! command -v git &> /dev/null
 then
     echo "git could not be found"
     exit 
 fi 
+linksCount = $(wc -l $file)
+
 #check if argument file exists
 [ -f "$file" ] || echo "Usage: file.txt"
 #make an ouput dir 
@@ -26,7 +29,10 @@ rm -rf "$outdir"/*
 
 #Loop through each link: May cause error if wrapped with "" 
 while read -r repo; do
-
+    iteration = 0
+    successful = 0 
+    failed = 0
+    echo "Current Link $teration"
     dirName="$(basename -- "$repo")"
     cd "$outdir" 
     mkdir "$dirName"
@@ -47,6 +53,8 @@ while read -r repo; do
             continue    
         fi
         echo "$repo" >> "$rootpath"/buildable.txt
+        iteration=$((iteration+1))
+        successful=$((successful+1))
     elif [ -f "pom.xml" ];
     then
         echo "[-------------Pom.xml file Exists-------------]"
@@ -60,6 +68,8 @@ while read -r repo; do
             continue    
         fi
         echo "$repo" >> "$rootpath"/buildable.txt
+        i=$(($iteration+1))
+        successful=$((successful+1))
     elif [ -f "build.xml" ];
     then
         echo "[-------------Build.xml file Exists-------------]"
@@ -73,12 +83,16 @@ while read -r repo; do
             continue    
         fi
         echo "$repo" >> "$rootpath"/buildable.txt
+        i=$(($iteration+1))
+        successful=$((successful+1))
     else
         echo "[-------------Build file does not exist-------------]"
         cd "$outdir" | exit
         echo "[-------------Attempting to remove clone-------------]"
         rm -rf "$dirName" && echo "[-------------Deleted $dirName-------------]"
+        failed=$((failed+1))
     fi
     #exit 0 # This is for testing a single project at a time. Remove this to use entire file. 
 done < "$file"
-echo "[-------------Completed-------------]"
+echo "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
+
