@@ -13,11 +13,10 @@ then
     exit 0
 fi 
 
-if [ -z ${1} ]; then echo "File is required" && exit 0;fi
+if [ -z "${1}" ]; then echo "File is required" && exit 0;fi
 file=$1 #file argument
 
 linksCount=$(cat "$file" | wc -l)
-echo $linksCount
 iteration=0
 successful=0 
 failed=0
@@ -40,10 +39,10 @@ while read -r repo; do
     cd "$outdir" 
     mkdir "$dirName"
 # Begin cloning project
-    echo "[Cloning ["$repo"]]"
     git clone "$repo" "$dirName" 
 # Change directory into project 
 # Check for build exec or just build
+    touch buildable.txt
     cd "$dirName" 
     iteration=$((iteration+1))
     if [ -f "gradlew" ];
@@ -59,8 +58,9 @@ while read -r repo; do
             rm -rf "$dirName"
             continue    
         fi
-        echo "$repo" >> "$rootpath"/buildable.txt
+        echo "$repo" >> buildable.txt
         successful=$((successful+1))
+        echo "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     elif [ -f "pom.xml" ];
     then
         echo "[Pom.xml file Exists]"
@@ -73,7 +73,7 @@ while read -r repo; do
             rm -rf "$dirName"
             continue    
         fi
-        echo "$repo" >> "$rootpath"/buildable.txt
+        echo "$repo" >> buildable.txt
         successful=$((successful+1))
         "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     elif [ -f "build.xml" ];
@@ -88,7 +88,7 @@ while read -r repo; do
             rm -rf "$dirName"
             continue    
         fi
-        echo "$repo" >> "$rootpath"/buildable.txt
+        echo "$repo" >> buildable.txt
         successful=$((successful+1))
         "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     else
