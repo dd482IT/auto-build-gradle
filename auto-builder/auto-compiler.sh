@@ -32,7 +32,7 @@ rm -rf "$outdir"/*
 
 #Loop through each link: May cause error if wrapped with 
 while read -r repo; do
-    echo "Current Link $repo"
+    echo "[Current Link $repo]"
 # Extract name of project
     dirName="$(basename -- "$repo")"
 # Change into workspace and make project directory
