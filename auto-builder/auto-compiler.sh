@@ -16,7 +16,8 @@ fi
 if [ -z ${1} ]; then echo "File is required" && exit 0;fi
 file=$1 #file argument
 
-linksCount=$(wc -l $file)
+linksCount=$(cat "$file" | wc -l)
+echo $linksCount
 iteration=0
 successful=0 
 failed=0
