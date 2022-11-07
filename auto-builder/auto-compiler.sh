@@ -39,7 +39,7 @@ while read -r repo; do
     cd "$outdir" 
     mkdir "$dirName"
 # Begin cloning project
-    git clone "$repo" "$dirName" &
+    git clone "$repo" "$dirName"
 # Change directory into project 
 # Check for build exec or just build
     touch buildable.txt
