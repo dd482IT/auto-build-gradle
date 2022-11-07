@@ -54,7 +54,7 @@ while read -r repo; do
         then 
             echo "[Grade failed with exit status $gradlew_return_code]"
             failed=$((failed+1))
-            cd "$outdir" | exit 1
+            #cd "$outdir" | exit 1
             rm -rf "$dirName"
             continue    
         fi
@@ -69,7 +69,7 @@ while read -r repo; do
         then 
             echo "[Maven failed with exit status $maven_return_code]"
             failed=$((failed+1))
-            cd "$outdir" || exit 1
+            #cd "$outdir" || exit 1
             rm -rf "$dirName"
             continue    
         fi
@@ -84,7 +84,7 @@ while read -r repo; do
         then 
             echo "[Ant failed with exit status $ant_return_code]"
             failed=$((failed+1))
-            cd "$outdir" || exit 1
+            #cd "$outdir" || exit 1
             rm -rf "$dirName"
             continue    
         fi
@@ -93,7 +93,7 @@ while read -r repo; do
         "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     else
         echo "[Build file does not exist]"
-        cd "$outdir" | exit
+        #cd "$outdir" | exit
         echo "[Attempting to remove clone]"
         rm -rf "$dirName" && echo "[Deleted $dirName]"
         failed=$((failed+1))
