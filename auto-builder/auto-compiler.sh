@@ -52,7 +52,7 @@ while read -r repo; do
         if [ $gradlew_return_code != 0 ] #test this on build that failes
         then 
             echo "[Grade failed with exit status $gradlew_return_code]"
-            pwd
+            i=$(($failed+1))
             cd "$outdir" | exit 1
             rm -rf "$dirName"
             continue    
@@ -67,7 +67,7 @@ while read -r repo; do
         if [ $maven_return_code != 0 ] #test this on build that failes
         then 
             echo "[Maven failed with exit status $maven_return_code]"
-            pwd
+            i=$(($failed+1))
             cd "$outdir" || exit 1
             rm -rf "$dirName"
             continue    
@@ -75,6 +75,7 @@ while read -r repo; do
         echo "$repo" >> "$rootpath"/buildable.txt
         i=$(($iteration+1))
         successful=$((successful+1))
+        "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     elif [ -f "build.xml" ];
     then
         echo "[Build.xml file Exists]"
@@ -82,7 +83,7 @@ while read -r repo; do
         if [ $ant_return_code != 0 ] #test this on build that failes
         then 
             echo "[Ant failed with exit status $ant_return_code]"
-            pwd
+            i=$(($failed+1))
             cd "$outdir" || exit 1
             rm -rf "$dirName"
             continue    
@@ -90,12 +91,14 @@ while read -r repo; do
         echo "$repo" >> "$rootpath"/buildable.txt
         i=$(($iteration+1))
         successful=$((successful+1))
+        "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     else
         echo "[Build file does not exist]"
         cd "$outdir" | exit
         echo "[Attempting to remove clone]"
         rm -rf "$dirName" && echo "[Deleted $dirName]"
         failed=$((failed+1))
+        "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     fi
     #exit 0 # This is for testing a single project at a time. Remove this to use entire file.   
 done < "$file"
