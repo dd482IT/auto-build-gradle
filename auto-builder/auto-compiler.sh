@@ -39,7 +39,7 @@ while read -r repo; do
     cd "$outdir" 
     mkdir "$dirName"
 # Begin cloning project
-    git clone "$repo" "$dirName" 
+    git clone "$repo" "$dirName" &
 # Change directory into project 
 # Check for build exec or just build
     touch buildable.txt
@@ -60,7 +60,6 @@ while read -r repo; do
         fi
         echo "$repo" >> buildable.txt
         successful=$((successful+1))
-        echo "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     elif [ -f "pom.xml" ];
     then
         echo "[Pom.xml file Exists]"
@@ -75,7 +74,6 @@ while read -r repo; do
         fi
         echo "$repo" >> buildable.txt
         successful=$((successful+1))
-        "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     elif [ -f "build.xml" ];
     then
         echo "[Build.xml file Exists]"
@@ -90,15 +88,14 @@ while read -r repo; do
         fi
         echo "$repo" >> buildable.txt
         successful=$((successful+1))
-        "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     else
         echo "[Build file does not exist]"
         #cd "$outdir" | exit
         echo "[Attempting to remove clone]"
         rm -rf "$dirName" && echo "[Deleted $dirName]"
         failed=$((failed+1))
-        "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     fi
+    echo "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     #exit 0 # This is for testing a single project at a time. Remove this to use entire file.   
 done < "$file"
 echo "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
