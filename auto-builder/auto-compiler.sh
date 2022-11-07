@@ -32,7 +32,7 @@ rm -rf "$outdir"/*
 
 #Loop through each link: May cause error if wrapped with 
 while read -r repo; do
-    echo "Current Link $teration"
+    echo "Current Link $repo"
 # Extract name of project
     dirName="$(basename -- "$repo")"
 # Change into workspace and make project directory
@@ -44,6 +44,7 @@ while read -r repo; do
 # Change directory into project 
 # Check for build exec or just build
     cd "$dirName" 
+    iteration=$((iteration+1))
     if [ -f "gradlew" ];
     then
         echo "[Gradlew file Exists]"
@@ -58,7 +59,6 @@ while read -r repo; do
             continue    
         fi
         echo "$repo" >> "$rootpath"/buildable.txt
-        iteration=$((iteration+1))
         successful=$((successful+1))
     elif [ -f "pom.xml" ];
     then
@@ -73,7 +73,6 @@ while read -r repo; do
             continue    
         fi
         echo "$repo" >> "$rootpath"/buildable.txt
-        i=$(($iteration+1))
         successful=$((successful+1))
         "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     elif [ -f "build.xml" ];
@@ -89,7 +88,6 @@ while read -r repo; do
             continue    
         fi
         echo "$repo" >> "$rootpath"/buildable.txt
-        i=$(($iteration+1))
         successful=$((successful+1))
         "[Progress:$iteration/$linksCount successful:$successful failed:$failed]"
     else
