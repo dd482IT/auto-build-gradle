@@ -16,10 +16,10 @@ fi
 if [ -z ${1} ]; then echo "File is required" && exit 0;fi
 file=$1 #file argument
 
-linksCount = $(wc -l $file)
-iteration = 0
-successful = 0 
-failed = 0
+linksCount=$(wc -l $file)
+iteration=0
+successful=0 
+failed=0
 
 
 #check if argument file exists
@@ -52,7 +52,7 @@ while read -r repo; do
         if [ $gradlew_return_code != 0 ] #test this on build that failes
         then 
             echo "[Grade failed with exit status $gradlew_return_code]"
-            i=$(($failed+1))
+            failed=$((failed+1))
             cd "$outdir" | exit 1
             rm -rf "$dirName"
             continue    
@@ -67,7 +67,7 @@ while read -r repo; do
         if [ $maven_return_code != 0 ] #test this on build that failes
         then 
             echo "[Maven failed with exit status $maven_return_code]"
-            i=$(($failed+1))
+            failed=$((failed+1))
             cd "$outdir" || exit 1
             rm -rf "$dirName"
             continue    
@@ -83,7 +83,7 @@ while read -r repo; do
         if [ $ant_return_code != 0 ] #test this on build that failes
         then 
             echo "[Ant failed with exit status $ant_return_code]"
-            i=$(($failed+1))
+            failed=$((failed+1))
             cd "$outdir" || exit 1
             rm -rf "$dirName"
             continue    
