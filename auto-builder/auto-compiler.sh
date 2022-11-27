@@ -37,61 +37,62 @@ mkdir -p output && cd output && outdir=$(pwd)
 #Loop through each link: May cause error if wrapped with 
 while read -r repo; do
     echo "[Current Link $repo]"
-# Extract name of project
+    # Extract name of project
     dirName="$(basename -- "$repo")"
-# Change into workspace and make project directory
+    # Change into workspace and make project directory
     cd $outdir
     mkdir "$dirName"
-# Begin cloning project
+    # Begin cloning project
     git clone "$repo" "$dirName"
-# Change directory into project 
-# Check for build exec or just build
+    # Change directory into project 
+    # Check for build exec or just build
     cd "$dirName" 
     iteration=$((iteration+1))
     if [ -f "gradlew" ];
     then
         echo "[Gradlew file Exists]"
         gradlew_output=$(./gradlew compileJava </dev/null 2>"$outdir"/"$dirName".log ); gradlew_return_code=$? 
-        if [ $gradlew_return_code != 0 ] #test this on build that failes
+        if [ $gradlew_return_code != 0 ] 
         then 
             failed=$((failed+1))
-            cd "$outdir" | exit 1
         else 
             echo "$repo" >> $buildable
             successful=$((successful+1))
         fi
+        cd "$outdir"
         rm -rf "$dirName"
         continue 
     elif [ -f "pom.xml" ];
     then
         echo "[Pom.xml file Exists]"
         maven_output=$(mvn compile); maven_return_code=$?
-        if [ $maven_return_code != 0 ] #test this on build that failes
+        if [ $maven_return_code != 0 ] 
         then 
             failed=$((failed+1))
-            cd "$outdir" || exit 1
+            cd "$outdir"
         else
             echo "$repo" >> $buildable
             successful=$((successful+1))    
         fi
+        cd "$outdir" | exit 1
         rm -rf "$dirName"
         continue
     elif [ -f "build.xml" ];
     then
         echo "[Build.xml file Exists]"
         maven_output=$(ant compile); ant_return_code=$?
-        if [ $ant_return_code != 0 ] #test this on build that failes
+        if [ $ant_return_code != 0 ] 
         then 
             failed=$((failed+1))
-            cd "$outdir" || exit 1
         else 
             echo "$repo" >> $buildable
             successful=$((successful+1))
         fi
+        cd "$outdir"
         rm -rf "$dirName"
         continue
     else
-        cd "$outdir" | exit
+        cd "$outdir"
         rm -rf "$dirName" && echo "[Deleted $dirName]"
         missingBuildFile=$((missingBuildFile+1))
     fi
